@@ -1,10 +1,13 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../../../hooks/useAuth";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import SocialLogin from "../SocialLogin/SocialLogin";
 
 const Login = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -15,7 +18,10 @@ const Login = () => {
 
   const handleLogin = (e) => {
     signInUser(e.email, e.password)
-      .then((result) => console.log(result.user))
+      .then((result) => {
+        console.log(result.user);
+        navigate(location?.state || '/')
+      })
       .catch((e) => console.log(e));
   };
 
@@ -77,7 +83,10 @@ const Login = () => {
           </div>
 
           {/* Login Button */}
-          <button type="submit" className="btn btn-primary w-full mt-6 text-black">
+          <button
+            type="submit"
+            className="btn btn-primary w-full mt-6 text-black"
+          >
             Sign In
           </button>
         </form>
