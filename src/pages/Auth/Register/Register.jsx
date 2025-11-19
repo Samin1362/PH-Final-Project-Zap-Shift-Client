@@ -1,7 +1,8 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../../../hooks/useAuth";
-import { Link } from "react-router";
+import { data, Link } from "react-router";
+import axios from "axios";
 
 const Register = () => {
   const {
@@ -9,12 +10,34 @@ const Register = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { registerUser } = useAuth();
+  const { registerUser, updateUserProfile } = useAuth();
   const handleRegistration = (e) => {
+    const profileImage = e.photo[0];
+
     registerUser(e.email, e.password)
       .then((result) => {
         // store the image and get the photo url
-        
+        const formData = new FormData();
+        formData.append("image", profileImage);
+        const image_API_URL = `https://api.imgbb.com/1/upload?key=${
+          import.meta.env.VITE_image_host
+        }`;
+        axios.post(image_API_URL, formData).then((res) => {
+          console.log("After image upload", res.data.data.url);
+
+          // update user profile
+          const userProfile = {
+            displayName: data.name,
+            photoURL: res.data.data.url,
+          };
+
+          updateUserProfile(userProfile)
+            .then(() => {
+              console.log("user profile updated")
+            })
+            .catch((e) => console.log(e));
+        });
+
         console.log(result.user);
       })
       .catch((e) => console.log(e));
@@ -76,7 +99,7 @@ const Register = () => {
             )}
           </div>
 
-            {/* photo input field  */}
+          {/* photo input field  */}
           <div className="form-control">
             <label className="label">
               <span className="label-text font-medium">Photo</span>
@@ -87,12 +110,9 @@ const Register = () => {
               className="file-input w-full"
               placeholder="Your Photo"
             />
-            {
-              errors.photo?.type === "required" && (
-                <p className="text-red-500">Photo is required</p>
-              )
-            }
-
+            {errors.photo?.type === "required" && (
+              <p className="text-red-500">Photo is required</p>
+            )}
           </div>
 
           {/* Register Button */}
