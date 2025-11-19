@@ -1,35 +1,98 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import useAuth from "../../../hooks/useAuth";
+import { Link } from "react-router";
 
 const Register = () => {
-
-  const { register, handleSubmit, formState: {errors} } = useForm();
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const { registerUser } = useAuth();
   const handleRegistration = (e) => {
-    console.log(e);
-  }
+    registerUser(e.email, e.password)
+      .then((result) => {
+        console.log(result.user);
+      })
+      .catch((e) => console.log(e));
+  };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(handleRegistration)}>
-        <fieldset className="fieldset">
-          <label className="label">Email</label>
-          <input type="email" {...register('email', {required: true})} className="input" placeholder="Email" />
-          {
-            errors.email?.type === 'required' && <p className="text-red-500">Email is required</p>
-          }
-          <label className="label">Password</label>
-          {/* password field */}
-          <input type="password" {...register('password', {required: true, minLength: 6})} className="input" placeholder="Password" />
-          {
-            errors.password?.type === 'required' && <p className="text-red-500">Password is required</p>
-          }
-          <div>
-            <a className="link link-hover">Forgot password?</a>
+    <div className="card bg-base-100 w-full shadow-2xl">
+      <div className="card-body p-8">
+        <h2 className="text-3xl font-bold text-center mb-2">Create Account</h2>
+        <p className="text-center text-base-content/70 mb-6">
+          Join Zap Shift today
+        </p>
+
+        <form onSubmit={handleSubmit(handleRegistration)} className="space-y-4">
+          {/* Email Field */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Email Address</span>
+            </label>
+            <input
+              type="email"
+              {...register("email", { required: true })}
+              className="input input-bordered w-full"
+              placeholder="Enter your email"
+            />
+            {errors.email?.type === "required" && (
+              <label className="label">
+                <span className="label-text-alt text-error">
+                  Email is required
+                </span>
+              </label>
+            )}
           </div>
-          <button className="btn btn-neutral mt-4">Login</button>
-        </fieldset>
-      </form>
+
+          {/* Password Field */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Password</span>
+            </label>
+            <input
+              type="password"
+              {...register("password", { required: true, minLength: 6 })}
+              className="input input-bordered w-full"
+              placeholder="Create a password (min 6 characters)"
+            />
+            {errors.password?.type === "required" && (
+              <label className="label">
+                <span className="label-text-alt text-error">
+                  Password is required
+                </span>
+              </label>
+            )}
+            {errors.password?.type === "minLength" && (
+              <label className="label">
+                <span className="label-text-alt text-error">
+                  Password must be at least 6 characters
+                </span>
+              </label>
+            )}
+          </div>
+
+          {/* Register Button */}
+          <button
+            type="submit"
+            className="btn btn-primary w-full mt-6 text-black"
+          >
+            Create Account
+          </button>
+        </form>
+
+        <div className="divider">OR</div>
+
+        {/* Login Link */}
+        <p className="text-center text-base-content/70">
+          Already have an account?{" "}
+          <Link to="/login" className="link link-primary font-semibold">
+            Sign in
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
