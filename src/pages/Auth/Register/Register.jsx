@@ -13,6 +13,8 @@ const Register = () => {
   const handleRegistration = (e) => {
     registerUser(e.email, e.password)
       .then((result) => {
+        // store the image and get the photo url
+        
         console.log(result.user);
       })
       .catch((e) => console.log(e));
@@ -72,6 +74,25 @@ const Register = () => {
                 </span>
               </label>
             )}
+          </div>
+
+            {/* photo input field  */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Photo</span>
+            </label>
+            <input
+              type="file"
+              {...register("photo", { required: true })}
+              className="file-input w-full"
+              placeholder="Your Photo"
+            />
+            {
+              errors.photo?.type === "required" && (
+                <p className="text-red-500">Photo is required</p>
+              )
+            }
+
           </div>
 
           {/* Register Button */}
