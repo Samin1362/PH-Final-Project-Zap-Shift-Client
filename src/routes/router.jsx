@@ -7,6 +7,7 @@ import Login from "../pages/Auth/Login/Login";
 import Register from "../pages/Auth/Register/Register";
 import PrivateRoute from "./PrivateRoute";
 import Rider from "../pages/Rider/Rider";
+import SendParcel from "../pages/SendParcel/SendParcel";
 
 const router = createBrowserRouter([
   {
@@ -15,33 +16,48 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        Component: Home
-      }, 
+        Component: Home,
+      },
       {
-        path: "/coverage", 
-        Component: Coverage, 
-        loader: () => fetch("/public/serviceCenters.json").then(res => res.json()),
-      }
-    ]
+        path: "/coverage",
+        Component: Coverage,
+        loader: () =>
+          fetch("/public/serviceCenters.json").then((res) => res.json()),
+      },
+      {
+        path: "/rider",
+        element: (
+          <PrivateRoute>
+            <Rider></Rider>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/send-parcel",
+        loader: () =>
+          fetch("/public/serviceCenters.json").then((res) => res.json()),
+        element: (
+          <PrivateRoute>
+            <SendParcel></SendParcel>
+          </PrivateRoute>
+        ),
+      },
+    ],
   },
   {
     path: "/",
-    Component: AuthLayout, 
+    Component: AuthLayout,
     children: [
       {
-        path: '/login', 
-        Component: Login
-      }, 
-      {
-        path: "/rider",
-        element: <PrivateRoute><Rider></Rider></PrivateRoute>
+        path: "/login",
+        Component: Login,
       },
       {
-        path: '/register', 
-        Component: Register
-      }
-    ]
-  }
+        path: "/register",
+        Component: Register,
+      },
+    ],
+  },
 ]);
 
 export default router;
